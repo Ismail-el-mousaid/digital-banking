@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 
+//Compte épargne
 @Entity
 @DiscriminatorValue("SA")
 @Data @NoArgsConstructor @AllArgsConstructor
