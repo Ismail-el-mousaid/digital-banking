@@ -26,5 +26,6 @@ public abstract class BankAccount {
  //   @OneToMany(mappedBy = "bankAccount", fetch = FetchType.EAGER) //Charger les opérations de chaque compte en mémoire
     @OneToMany(mappedBy = "bankAccount", fetch = FetchType.LAZY)    //chargement à la demande
     private List<AccountOperation> accountOperations;
+    private String description;
 
 }
