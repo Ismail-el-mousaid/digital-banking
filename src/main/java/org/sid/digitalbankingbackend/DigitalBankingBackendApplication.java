@@ -1,5 +1,9 @@
 package org.sid.digitalbankingbackend;
 
+import org.sid.digitalbankingbackend.dtos.BankAccountDTO;
+import org.sid.digitalbankingbackend.dtos.CurrentBankAccountDTO;
+import org.sid.digitalbankingbackend.dtos.CustomerDTO;
+import org.sid.digitalbankingbackend.dtos.SavingBankAccountDTO;
 import org.sid.digitalbankingbackend.entities.*;
 import org.sid.digitalbankingbackend.enums.AccountStatus;
 import org.sid.digitalbankingbackend.enums.OperationType;
@@ -28,34 +32,40 @@ public class DigitalBankingBackendApplication {
         SpringApplication.run(DigitalBankingBackendApplication.class, args);
     }
 
-    @Bean
+  //  @Bean
     CommandLineRunner commandLineRunner(BankAccountService bankAccountService){
         return args -> {
             Stream.of("Ismail", "Mohamed", "Marouane").forEach(name -> {
-                Customer customer = new Customer();
+                CustomerDTO customer = new CustomerDTO();
                 customer.setName(name);
                 customer.setEmail(name + "@gmail.com");
                 bankAccountService.saveCustomer(customer);
             });
+
             bankAccountService.listCustomers().forEach(customer -> {
                 try {
                     bankAccountService.saveCurrentBankAccount(Math.random()*90000, 9000, customer.getId());
                     bankAccountService.saveSavingBankAccount(Math.random()*120000, 5.5, customer.getId());
-                    List<BankAccount> bankAccounts = bankAccountService.bankAccountList();
-                    for (BankAccount bankAccount : bankAccounts){
-                        for (int i = 0; i < 10; i++) {
-                            bankAccountService.credit(bankAccount.getId(), 10000+Math.random()*12000, "Credit");
-                            bankAccountService.debit(bankAccount.getId(), 1000+Math.random()*9000, "Debit");
-                        }
-                    }
+
                 } catch (CustomerNotFoundException e) {
-                    e.printStackTrace();
-                } catch (BankAccountNotFoundException | BalanceNotSufficientException e) {
                     e.printStackTrace();
                 }
             });
+            List<BankAccountDTO> bankAccounts = bankAccountService.bankAccountList();
+            for (BankAccountDTO bankAccountDTO : bankAccounts){
+                for (int i = 0; i < 10; i++) {
+                    String accountId;
+                    if (bankAccountDTO instanceof SavingBankAccountDTO)
+                        accountId = ((SavingBankAccountDTO) bankAccountDTO).getId();
+                    else
+                        accountId = ((CurrentBankAccountDTO) bankAccountDTO).getId();
+                    bankAccountService.credit(accountId, 10000+Math.random()*12000, "Credit");
+                    bankAccountService.debit(accountId, 1000+Math.random()*9000, "Debit");
+                }
+            }
         };
     }
+
 
   //  @Bean
     CommandLineRunner start(CustomerRepository customerRepository,

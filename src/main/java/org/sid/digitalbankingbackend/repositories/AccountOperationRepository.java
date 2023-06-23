@@ -2,8 +2,13 @@ package org.sid.digitalbankingbackend.repositories;
 
 import org.sid.digitalbankingbackend.entities.AccountOperation;
 import org.sid.digitalbankingbackend.entities.BankAccount;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface AccountOperationRepository extends JpaRepository<AccountOperation, Long> {
+import java.util.List;
 
+public interface AccountOperationRepository extends JpaRepository<AccountOperation, Long> {
+    List<AccountOperation> findByBankAccount_Id(String accountId);
+    Page<AccountOperation> findByBankAccount_Id(String accountId, Pageable pageable);
 }
